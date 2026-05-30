@@ -40,7 +40,7 @@ git clone https://github.com/seu-usuario/seu-repositorio.git
 ### Acessando a pasta do projeto
  
 ```
-cd MyIoTProject
+cd PAMII_MQTT_PyetroFabricioPeterlini
 ```
  
 ### Instalando as dependências
