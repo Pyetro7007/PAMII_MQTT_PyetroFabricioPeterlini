@@ -34,7 +34,7 @@ As tecnologias usadas foram:
 ### Clonando o repositório
  
 ```
-git https://github.com/Pyetro7007/PAMII_MQTT_PyetroFabricioPeterlini.git
+git clone https://github.com/Pyetro7007/PAMII_MQTT_PyetroFabricioPeterlini.git
 ```
  
 ### Acessando a pasta do projeto
