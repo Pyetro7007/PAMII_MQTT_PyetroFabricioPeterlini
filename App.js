@@ -4,8 +4,10 @@ import MQTTService from './src/services/mqttService';
 import StatusModal from './src/components/StatusModal';
 import LightControl from './src/components/LightControl';
 import Gauges from './src/components/Gauges';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const mqtt = new MQTTService();
+const HISTORICO_KEY = '@sensor_history';
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(false);
@@ -13,6 +15,7 @@ export default function App() {
   const [isLightOn, setIsLightOn] = useState(false);
   const [temp, setTemp] = useState(0);
   const [hum, setHum] = useState(0);
+  const [history, setHistory] = useState([]);
 
   const mqttConfig = {
     host: process.env.EXPO_PUBLIC_MQTT_HOST,
@@ -24,15 +27,43 @@ export default function App() {
   };
 
   useEffect(() => {
+    loadHistorico();
     startConnection();
   }, []);
+
+  const loadHistorico = async () => {
+    try {
+      const json = await AsyncStorage.getItem(HISTORICO_KEY);
+      if (json) setHistory(JSON.parse(json));
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  const saveLeitura = async (newTemp, newHum) => {
+    const newRecord = {
+      temp: newTemp,
+      hum: newHum,
+      timestamp: new Date().toISOString(),
+    }
+
+    setHistory(prev => {
+      const updated = [...prev, newRecord];
+      AsyncStorage.setItem(HISTORICO_KEY, JSON.stringify(updated));
+      console.log('Histórico salvo:', updated);
+      return updated;
+    });
+  };
 
   const startConnection = () => {
     setShowError(false);
     mqtt.connect(
       mqttConfig,
       (topic, message) => {
-        if (topic === 'casa/temp') setTemp(parseFloat(message));
+        if (topic === 'casa/temp') {
+          setTemp(parseFloat(message));
+          saveLeitura(parseFloat(message), hum);
+        }
         if (topic === 'casa/umid') setHum(parseFloat(message));
         if (topic === 'casa/luz') setIsLightOn(message === "1");
       },
