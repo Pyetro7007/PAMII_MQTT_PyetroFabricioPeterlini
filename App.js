@@ -13,8 +13,7 @@ export default function App() {
   const [isConnected, setIsConnected] = useState(false);
   const [showError, setShowError] = useState(false);
   const [isLightOn, setIsLightOn] = useState(false);
-  const [temp, setTemp] = useState(0);
-  const [hum, setHum] = useState(0);
+  const [sensors, setSensors] = useState({ temp: 0, hum: 0 });
   const [history, setHistory] = useState([]);
 
   const mqttConfig = {
@@ -61,10 +60,17 @@ export default function App() {
       mqttConfig,
       (topic, message) => {
         if (topic === 'casa/temp') {
-          setTemp(parseFloat(message));
-          saveLeitura(parseFloat(message), hum);
+          setSensors(prev => {
+            const updated = { ...prev, temp: parseFloat(message) };
+            saveLeitura(updated.temp, updated.hum);
+            return updated;
+          });
         }
-        if (topic === 'casa/umid') setHum(parseFloat(message));
+
+        if (topic === 'casa/umid') {
+          setSensors(prev => ({ ...prev, hum: parseFloat(message) }))
+        };
+
         if (topic === 'casa/luz') setIsLightOn(message === "1");
       },
       () => {
@@ -91,7 +97,7 @@ export default function App() {
 
       <LightControl isLightOn={isLightOn} onToggle={toggleLight} />
 
-      <Gauges temp={temp} hum={hum} />
+      <Gauges temp={sensors.temp} hum={sensors.hum} />
 
       {/* Componente de Status de Conexão */}
       <StatusModal 
