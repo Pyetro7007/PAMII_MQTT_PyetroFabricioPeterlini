@@ -1,6 +1,6 @@
 # Dominando IoT com MQTT, ESP32 e React Native
  
-Esse repositório compartilha um aplicativo mobile de IoT (Internet das Coisas), desenvolvido em JavaScript utilizando React Native com Expo. O projeto abrange duas etapas: a configuração do protocolo de comunicação MQTT via HiveMQ Cloud (Broker) e o desenvolvimento de um dashboard mobile capaz de publicar e assinar tópicos MQTT em tempo real. O foco está na comunicação segura com o Broker na nuvem, no controle simulado de uma lâmpada e na exibição de dados de sensores por meio de medidores circulares.
+Esse repositório compartilha um aplicativo mobile de IoT, desenvolvido em JavaScript utilizando React Native com Expo. O projeto abrange a configuração do protocolo MQTT via HiveMQ Cloud e o desenvolvimento de um dashboard mobile para publicar e assinar tópicos em tempo real. O app inclui persistência de dados local para histórico de leituras.
  
 As tecnologias usadas foram:
  
@@ -9,6 +9,7 @@ As tecnologias usadas foram:
 - Expo
 - MQTT (protocolo Pub/Sub)
 - HiveMQ Cloud (Broker)
+- Async Storage (para histórico local)
 - react_native_mqtt
 - react-native-circular-progress-indicator
 - react-native-dotenv
@@ -57,6 +58,10 @@ npx expo install react-native-vector-icons react-native-svg
 npx expo install react-native-circular-progress-indicator
 npx expo install react-native-dotenv
 ```
+
+### Armazenamento Local
+
+O app salva automaticamente o histórico de leituras (temperatura e umidade) no dispositivo utilizando AsyncStorage com a chave @sensor_history, garantindo que os dados não sejam perdidos ao fechar o aplicativo.
  
 ### Configurando as variáveis de ambiente
  
@@ -75,7 +80,7 @@ MQTT_PASS=sua_senha
 ### Executando o aplicativo
  
 ```
-npx expo start --tunnel
+npx expo start
 ```
  
 Após executar o comando, será exibido um QR Code. Leia-o com o aplicativo **Expo Go** no celular.
@@ -89,4 +94,6 @@ Após executar o comando, será exibido um QR Code. Leia-o com o aplicativo **Ex
 | `casa/luz`  | App → Broker       | Liga (1) ou desliga (0) a luz  |
 | `casa/temp` | Broker → App       | Recebe a temperatura em °C     |
 | `casa/umid` | Broker → App       | Recebe a umidade relativa em % |
+
+Vídeo informativo: https://youtu.be/KF1vaqmT4Qw
 
